@@ -1,10 +1,13 @@
-namespace WebApplication1
-{
-    public class Persona(string nombre)
-    {
-        public string Nombre { get; set; } = nombre;
+//using Microsoft.EntityFrameworkCore;
+//using WebApplication1.Models;
 
-        public void Saludar() => Console.WriteLine($"hola {Nombre}");
+//namespace WebApplication1
+//{
+//    public class ApplicationDbContext : DbContext
+//    {
+//        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+
+//        public DbSet<User> Usuarios { get; set; }
     
-    }
-}
+//    }
+//}

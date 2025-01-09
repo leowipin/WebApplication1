@@ -8,16 +8,25 @@ namespace WebApplication1.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage ="El nombre es requerido")]
-        [MinLength(2, ErrorMessage ="El nombre debe contener mas de 2 caracteres")]
-        [MaxLength(20, ErrorMessage = "El nombre debe contener mas de 20 caracteres")]
-        [RegularExpression(@"[a-zA-Z]+$", ErrorMessage ="El nombre solo debe contener letras")]
-        public string Name { get; set; }
+        [Required]
+        [MinLength(2)]
+        [MaxLength(50)]
+        [RegularExpression("%[a-zA-Z+ÁÉÍÓÚáéíóúñÑ]%", ErrorMessage ="El nombre debe contener caracteres en español")]
+        public string Name { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "El correo es requerido")]
+        [Required]
         [EmailAddress]
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(20, MinimumLength =2)]
+        public string Username {  get; set; } = string.Empty;
+
+        [Required]
+        public string Password { get; set; } = string.Empty;
+
+        [Required]
+        [Range(0, 100)]
         public int Age { get; set; }
     }
 }
