@@ -13,7 +13,7 @@ namespace WebApplication1.Models
         [MaxLength(50)]
         [RegularExpression("%[a-zA-Z+ÁÉÍÓÚáéíóúñÑ]%", ErrorMessage ="El nombre debe contener caracteres en español")]
         public string Name { get; set; } = string.Empty;
-
+        
         [Required]
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
