@@ -1,3 +1,6 @@
+/// <summary>
+/// Configures the web application builder, adds services to the container, and builds the application.
+/// </summary>
 using Microsoft.EntityFrameworkCore;
 using WebApplication1;
 
@@ -9,7 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options => 
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
