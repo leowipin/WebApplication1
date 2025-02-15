@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication1;
 
@@ -11,9 +12,11 @@ using WebApplication1;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250208235310_CommentAuditable")]
+    partial class CommentAuditable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -296,10 +299,6 @@ namespace WebApplication1.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
@@ -309,49 +308,19 @@ namespace WebApplication1.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasIndex("CustomerId");
+                    b.HasKey("Id");
 
                     b.HasIndex("DeletedAt");
 
                     b.HasIndex("ToDoTaskId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Customer", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("IsVip")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("VipExpired")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Customers", (string)null);
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Staff", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Position")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StaffId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Staffs", (string)null);
                 });
 
             modelBuilder.Entity("WebApplication1.Models.SubTask", b =>
@@ -405,13 +374,7 @@ namespace WebApplication1.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
@@ -442,11 +405,15 @@ namespace WebApplication1.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
-
                     b.HasIndex("DeletedAt");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Tasks");
                 });
@@ -585,41 +552,19 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.Comment", b =>
                 {
-                    b.HasOne("WebApplication1.Models.Customer", "Customer")
-                        .WithMany("Comments")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("WebApplication1.Models.ToDoTask", "ToDoTask")
                         .WithMany("Comments")
                         .HasForeignKey("ToDoTaskId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Customer");
+                    b.HasOne("WebApplication1.Models.User", "User")
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ToDoTask");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Customer", b =>
-                {
-                    b.HasOne("WebApplication1.Models.User", "User")
-                        .WithOne("Customer")
-                        .HasForeignKey("WebApplication1.Models.Customer", "Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Staff", b =>
-                {
-                    b.HasOne("WebApplication1.Models.User", "User")
-                        .WithOne("Staff")
-                        .HasForeignKey("WebApplication1.Models.Staff", "Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -637,20 +582,13 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.ToDoTask", b =>
                 {
-                    b.HasOne("WebApplication1.Models.Customer", "Customer")
+                    b.HasOne("WebApplication1.Models.User", "User")
                         .WithMany("ToDoTasks")
-                        .HasForeignKey("CustomerId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Customer");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Customer", b =>
-                {
-                    b.Navigation("Comments");
-
-                    b.Navigation("ToDoTasks");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.ToDoTask", b =>
@@ -662,9 +600,9 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.User", b =>
                 {
-                    b.Navigation("Customer");
+                    b.Navigation("Comments");
 
-                    b.Navigation("Staff");
+                    b.Navigation("ToDoTasks");
                 });
 #pragma warning restore 612, 618
         }

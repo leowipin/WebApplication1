@@ -8,7 +8,7 @@ namespace WebApplication1.Models
     public class ToDoTask : AuditableEntity
     {
         public int Id { get; set; }
-        public string UserId { get; set; } = string.Empty;
+        public string CustomerId { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
         public string SubDescription { get; set; } = string.Empty;
@@ -16,7 +16,7 @@ namespace WebApplication1.Models
         public ToDoTaskStatus Status { get; set; } = ToDoTaskStatus.Open;
         public PriorityStatus? Priority { get; set; }
         //navigation properties
-        public User User { get; set; } = default!;
+        public Customer Customer { get; set; } = default!;
         public ICollection<Category> Categories { get; set; } = new List<Category>();
         public ICollection<SubTask> SubTasks { get; set; } = new List<SubTask>();
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();

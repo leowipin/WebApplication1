@@ -22,6 +22,8 @@ namespace WebApplication1
             base.OnModelCreating(builder);
             builder.ApplyConfiguration(new ToDoTaskConfiguration());
             builder.ApplyConfiguration(new UserConfiguration());
+            builder.ApplyConfiguration(new CustomerConfiguration());
+            builder.ApplyConfiguration(new StaffConfiguration());
 
             foreach (var entityType in builder.Model.GetEntityTypes())
             {
@@ -84,5 +86,7 @@ namespace WebApplication1
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<SubTask> SubTasks{ get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Staff> Staffs { get; set; }
     }
 }

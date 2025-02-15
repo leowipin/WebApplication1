@@ -8,8 +8,9 @@ namespace WebApplication1.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
-        public ICollection<ToDoTask> ToDoTasks { get; set; } = new List<ToDoTask>();
-        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        // nav property
+        public Customer? Customer { get; set; }
+        public Staff? Staff { get; set; }
     }
     
 }

@@ -13,10 +13,11 @@ namespace WebApplication1.Configurations
             entity.Property(x => x.Description).HasMaxLength(500);
             entity.Property(x => x.Status).HasConversion<string>();
             entity.Property(x => x.Priority).HasConversion<string>();
+            entity.Property(x => x.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
             // relationships
-            entity.HasOne(toDoTask => toDoTask.User)
-                .WithMany(user => user.ToDoTasks)
-                .HasForeignKey(toDoTask => toDoTask.UserId)
+            entity.HasOne(toDoTask => toDoTask.Customer)
+                .WithMany(customer => customer.ToDoTasks)
+                .HasForeignKey(toDoTask => toDoTask.CustomerId).IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
             entity.HasMany(t => t.Categories)
                 .WithMany(c => c.ToDoTasks)
