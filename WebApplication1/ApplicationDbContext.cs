@@ -8,7 +8,7 @@ using WebApplication1.Models.Base;
 
 namespace WebApplication1
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
@@ -20,10 +20,23 @@ namespace WebApplication1
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.ApplyConfiguration(new ToDoTaskConfiguration());
+
+            // new names of Identity tables
+            builder.Entity<User>().ToTable("Users");
+            builder.Entity<IdentityRole>().ToTable("Roles");
+            builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
+            builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
+            builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
+            builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+            builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
+            builder.Entity<CustomerVip>();
+
+            // configurations of tables
             builder.ApplyConfiguration(new UserConfiguration());
+            builder.ApplyConfiguration(new ToDoTaskConfiguration());
             builder.ApplyConfiguration(new CustomerConfiguration());
             builder.ApplyConfiguration(new StaffConfiguration());
+            builder.ApplyConfiguration(new CustomerVipConfiguration());
 
             foreach (var entityType in builder.Model.GetEntityTypes())
             {
@@ -81,12 +94,14 @@ namespace WebApplication1
             }
         }
 
-        public DbSet<Usuario> Usuarios { get; set; }
+        //public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<ToDoTask> Tasks { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<SubTask> SubTasks{ get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Staff> Staffs { get; set; }
+        //public DbSet<CustomerVip> CustomerVips { get; set; }
+
     }
 }

@@ -8,6 +8,7 @@ namespace WebApplication1.Configurations
     {
         public void Configure(EntityTypeBuilder<User> entity)
         {
+            entity.Property(x => x.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
             // relationships
             entity.HasOne(user => user.Customer)
                 .WithOne(customer => customer.User)

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication1;
 
@@ -11,9 +12,11 @@ using WebApplication1;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250217165030_ChangeNameUserModel")]
+    partial class ChangeNameUserModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,7 +64,7 @@ namespace WebApplication1.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("AspNetRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -86,7 +89,7 @@ namespace WebApplication1.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("RoleClaims", (string)null);
+                    b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -111,7 +114,7 @@ namespace WebApplication1.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserClaims", (string)null);
+                    b.ToTable("AspNetUserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -133,7 +136,7 @@ namespace WebApplication1.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserLogins", (string)null);
+                    b.ToTable("AspNetUserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -148,7 +151,7 @@ namespace WebApplication1.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRoles", (string)null);
+                    b.ToTable("AspNetUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -167,7 +170,7 @@ namespace WebApplication1.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("UserTokens", (string)null);
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Category", b =>
@@ -251,22 +254,15 @@ namespace WebApplication1.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("CustomerType")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("Regular");
+                    b.Property<bool>("IsVip")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("VipExpired")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_CustomerType", "[CustomerType] IN ('Regular', 'VIP')");
-                        });
-
-                    b.HasDiscriminator<string>("CustomerType").HasValue("Regular");
-
-                    b.UseTphMappingStrategy();
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Staff", b =>
@@ -397,9 +393,7 @@ namespace WebApplication1.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
@@ -462,22 +456,41 @@ namespace WebApplication1.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.CustomerVip", b =>
+            modelBuilder.Entity("WebApplication1.Models.Usuario", b =>
                 {
-                    b.HasBaseType("WebApplication1.Models.Customer");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("Discount")
-                        .HasColumnType("decimal(3,2)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("VipExpired")
-                        .HasColumnType("datetime2");
+                    b.Property<byte>("Age")
+                        .HasColumnType("tinyint");
 
-                    b.ToTable(t =>
-                        {
-                            t.HasCheckConstraint("CK_CustomerType", "[CustomerType] IN ('Regular', 'VIP')");
-                        });
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasDiscriminator().HasValue("VIP");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("CategoryToDoTask", b =>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication1;
 
@@ -11,9 +12,11 @@ using WebApplication1;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250217181458_ChangeNameIdentities")]
+    partial class ChangeNameIdentities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -251,22 +254,15 @@ namespace WebApplication1.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("CustomerType")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("Regular");
+                    b.Property<bool>("IsVip")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("VipExpired")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_CustomerType", "[CustomerType] IN ('Regular', 'VIP')");
-                        });
-
-                    b.HasDiscriminator<string>("CustomerType").HasValue("Regular");
-
-                    b.UseTphMappingStrategy();
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Staff", b =>
@@ -462,22 +458,41 @@ namespace WebApplication1.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.CustomerVip", b =>
+            modelBuilder.Entity("WebApplication1.Models.Usuario", b =>
                 {
-                    b.HasBaseType("WebApplication1.Models.Customer");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("Discount")
-                        .HasColumnType("decimal(3,2)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("VipExpired")
-                        .HasColumnType("datetime2");
+                    b.Property<byte>("Age")
+                        .HasColumnType("tinyint");
 
-                    b.ToTable(t =>
-                        {
-                            t.HasCheckConstraint("CK_CustomerType", "[CustomerType] IN ('Regular', 'VIP')");
-                        });
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasDiscriminator().HasValue("VIP");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("CategoryToDoTask", b =>

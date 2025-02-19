@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using WebApplication1.Enums;
 using WebApplication1.Models;
 
 namespace WebApplication1.Configurations
@@ -8,12 +9,24 @@ namespace WebApplication1.Configurations
     {
         public void Configure(EntityTypeBuilder<Customer> entity)
         {
-            entity.ToTable("Customers");
+            // to table
+            entity.ToTable("Customers", b =>
+            {
+                b.HasCheckConstraint("CK_CustomerType", $"[CustomerType] IN ('{nameof(CustomerTypes.Regular)}', '{nameof(CustomerTypes.VIP)}')");
+            });
+
+            // properties
+            entity.Property(x => x.CustomerType).HasConversion<string>().HasDefaultValue(CustomerTypes.Regular);
+            
             // relationships
             entity.HasMany(cust => cust.Comments)
                 .WithOne(comm => comm.Customer)
                 .HasForeignKey(comm => comm.CustomerId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // discriminators
+            entity.HasDiscriminator(x => x.CustomerType)
+              .HasValue<Customer>(CustomerTypes.Regular)
+              .HasValue<CustomerVip>(CustomerTypes.VIP);
         }
     }
 }
