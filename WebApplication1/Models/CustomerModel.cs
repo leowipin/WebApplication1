@@ -4,8 +4,9 @@ namespace WebApplication1.Models
 {
     public class Customer
     {
-        public string Id { get; set; } = string.Empty;
+        public Guid Id { get; set; }
         public CustomerTypes CustomerType { get; set; } = CustomerTypes.Regular;
+        public string NickName { get; set; } = string.Empty;
         // nav property
         public User User { get; set; } = default!;
         public ICollection<ToDoTask> ToDoTasks { get; set; } = new List<ToDoTask>();

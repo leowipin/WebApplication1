@@ -4,11 +4,11 @@ using WebApplication1.Models;
 namespace WebApplication1.Controllers
 {
     [ApiController]
-    [Route("usuarios")]
-    public class UserController(ApplicationDbContext dbContext) : ControllerBase
+    [Route("api/[controller]")]
+    public class UserController(ApplicationDbContext context) : ControllerBase
     {
-        private ApplicationDbContext _dbContext = dbContext;
-
+        private readonly ApplicationDbContext _context = context;
+        
         //[HttpPost]
         //public Task<IActionResult> CreateUser(User user)
         //{

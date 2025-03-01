@@ -7,7 +7,7 @@ namespace WebApplication1.Models
     public class Category : AuditableEntity
     {
         public int Id { get; set; }
-        public string UserId { get; set; } = string.Empty;
+        public Guid UserId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         //navigation properties

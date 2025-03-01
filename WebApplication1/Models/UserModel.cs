@@ -3,7 +3,7 @@ using WebApplication1.Models.Base;
 
 namespace WebApplication1.Models
 {
-    public class User : IdentityUser, IAuditableEntity
+    public class User : IdentityUser<Guid>, IAuditableEntity
     {
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
