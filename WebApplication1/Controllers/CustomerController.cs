@@ -1,3 +1,4 @@
+using System.Transactions;
 using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -20,7 +21,8 @@ namespace WebApplication1.Controllers
         [HttpPost]
         public async Task<ActionResult> CustomerPost([FromBody] CustomerCreationDto customer)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            //using var transaction = await _context.Database.BeginTransactionAsync();
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 var user = _mapper.Map<User>(customer);
@@ -31,26 +33,41 @@ namespace WebApplication1.Controllers
                 }
                 var mapCustomerResult = _mapper.Map<Customer>(customer);
                 mapCustomerResult.CustomerType = Enums.CustomerTypes.Regular;
-                //mapCustomerResult.Id = user.Id;
+                mapCustomerResult.Id = user.Id;
                 mapCustomerResult.User = user;
 
                 _context.Customers.Add(mapCustomerResult);
                 await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-                return CreatedAtAction(nameof(CustomerPost), customer);
+                //await transaction.CommitAsync();
+
+                var customerDto = _mapper.Map<CustomerDto>(mapCustomerResult);
+
+                transaction.Complete();
+
+                return CreatedAtAction(nameof(CustomerGet), new {id = customerDto.Id} ,customerDto);
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                //await transaction.RollbackAsync();
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
             }
         }
 
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<CustomerDto>> CustomerGet(string id)
-        //{
-        //    var customer = await _context.Customers
-        //        .Include()
-        //}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CustomerDto>> CustomerGet(Guid id)
+        {
+            var customer = await _context.Customers
+                .Include(c=>c.User)
+                .FirstOrDefaultAsync(c=>c.Id==id);
+
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            var customerDto = _mapper.Map<CustomerDto>(customer);
+
+            return Ok(customerDto);
+        }
     }
 }

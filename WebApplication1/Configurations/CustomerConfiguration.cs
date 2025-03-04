@@ -17,7 +17,8 @@ namespace WebApplication1.Configurations
 
             // properties
             entity.Property(x => x.CustomerType).HasConversion<string>().HasDefaultValue(CustomerTypes.Regular);
-            
+            // index
+            entity.HasIndex(x=>x.NickName).IsUnique();
             // relationships
             entity.HasMany(cust => cust.Comments)
                 .WithOne(comm => comm.Customer)

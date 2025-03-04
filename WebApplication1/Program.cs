@@ -1,8 +1,11 @@
 /// <summary>
 /// Configures the web application builder, adds services to the container, and builds the application.
 /// </summary>
+using System.Reflection;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1;
+using WebApplication1.Models;
 
 var builder = WebApplication.CreateBuilder();
 
@@ -14,6 +17,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+builder.Services.AddIdentity<User, IdentityRole<Guid>>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
 var app = builder.Build();
 
