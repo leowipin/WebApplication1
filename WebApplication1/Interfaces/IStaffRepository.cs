@@ -6,6 +6,6 @@ namespace WebApplication1.Interfaces
     {
         Task AddAsync(Staff staff);
         Task SaveChangeAsync();
-        IQueryable<Staff> GetStaffQueryable(); 
+        IQueryable<Staff> GetStaffQueryable(Guid id); 
     }
 }

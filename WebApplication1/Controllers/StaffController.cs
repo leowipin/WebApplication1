@@ -1,47 +1,27 @@
-using System.Transactions;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WebApplication1.Dtos;
-using WebApplication1.Models;
+using WebApplication1.Exceptions;
+using WebApplication1.Interfaces;
 
 namespace WebApplication1.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class StaffController(ApplicationDbContext context, IMapper mapper, UserManager<User> userManager)
-        : ControllerBase
+    public class StaffController(IStaffService staffService) : ControllerBase
     {
-        private readonly ApplicationDbContext _context = context;
-        private readonly UserManager<User> _userManager = userManager;
-        private readonly IMapper _mapper = mapper;
+        private readonly IStaffService _staffService = staffService;
 
         [HttpPost]
         public async Task<ActionResult> StaffCreate([FromBody] StaffCreationDto staffCreationDto)
         {
-            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
-                var userMapped = _mapper.Map<User>(staffCreationDto);
-                var createUserResult = await _userManager.CreateAsync(userMapped, staffCreationDto.Password);
-                if (!createUserResult.Succeeded)
-                {
-                    return BadRequest(createUserResult.Errors);
-                }
-                var staffMapped = _mapper.Map<Staff>(staffCreationDto);
-                staffMapped.User = userMapped;
-
-                await _context.Staffs.AddAsync(staffMapped);
-                await _context.SaveChangesAsync();
-                
-                transaction.Complete();
-
-                var staffDto = _mapper.Map<StaffDto>(staffMapped);
-
+                var staffDto = await _staffService.CreateStaffByIdAsync(staffCreationDto);
                 return CreatedAtAction(nameof(StaffGet), new { id = staffDto.Id }, staffDto);
-
+            }
+            catch (UserCreationException ex)
+            {
+                return BadRequest(new { error = ex.Message, details = ex.Errors });
             }
             catch (Exception ex)
             {
@@ -52,15 +32,8 @@ namespace WebApplication1.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<StaffDto>> StaffGet(Guid id)
         {
-            var staffDto = await _context.Staffs
-                .ProjectTo<StaffDto>(_mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync(s=>s.Id == id);
-
-            if (staffDto == null)
-            {
-                return NotFound();
-            }
-
+            var staffDto = await _staffService.GetStaffByIdAsync(id);
+            if (staffDto == null) return NotFound();
             return Ok(staffDto);
         }
     }
