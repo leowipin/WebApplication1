@@ -8,7 +8,11 @@ namespace WebApplication1.Configurations
     {
         public void Configure(EntityTypeBuilder<User> entity)
         {
+            // indices
+            entity.HasIndex(x => x.Email).IsUnique();
+            // propiedades
             entity.Property(x => x.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+            entity.Property(x => x.Email).IsRequired();   
             // relationships
             entity.HasOne(user => user.Customer)
                 .WithOne(customer => customer.User)

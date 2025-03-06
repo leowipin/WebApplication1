@@ -9,7 +9,7 @@ namespace WebApplication1.Mappings
         public CustomerProfile() 
         {
             CreateMap<CustomerCreationDto, User>()
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email.Split('@', StringSplitOptions.None)[0]))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest=>dest.Email, opt => opt.MapFrom(src => src.Email));
             CreateMap<CustomerCreationDto, Customer>()
                 .ForMember(dest => dest.NickName, opt => opt.MapFrom(src => src.NickName));
